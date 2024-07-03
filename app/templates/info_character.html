@@ -1,0 +1,101 @@
+{% extends 'base-login.html' %}
+
+{% block title %}
+{{character["name"]}}
+{% endblock %}
+
+{% block body %}
+<a href="/{{info_type}}/?page={{page}}"><img src="/static/img/arrow-left-square.svg" width="5" height="5"></a><br><br>
+<h1>{{character["name"]}}</h1>
+
+{% if info_type=="people" %}
+    <p>Рост: {{character["height"]}}</p>
+    <p>Вес: {{character["mass"]}}</p>
+    <p>Дата рождения: {{character["birth_year"]}}</p>
+    <p>Пол: {{character["gender"]}}</p>
+    {% if character["homeworld"] != [] %}
+        <p>Родной мир:
+            <ul>
+                {% for res in object_homeworld %}
+                <li>{{res}}</li>
+                {% endfor %}
+            </ul>
+        </p>
+    {% endif %}
+    {% if character["films"] != [] %}
+        <p>Фильмы:
+            <ul>
+                {% for res in object_film %}
+                <li>{{res}}</li>
+                {% endfor %}
+            </ul>
+        </p>
+    {% endif %}
+    {% if character["vehicles"] != [] %}
+        <p>Транспортные средства:
+            <ul>
+                {% for res in object_vehicles %}
+                <li>{{res}}</li>
+                {% endfor %}
+            </ul>
+        </p>
+    {% endif %}
+    {% if character["starships"] != [] %}
+        <p>Корабли:
+            <ul>
+                {% for res in object_starships %}
+                <li>{{res}}</li>
+                {% endfor %}
+            </ul>
+        </p>
+    {% endif %}
+{% endif %}
+
+{% if info_type=="starships" %}
+    <p>Модель: {{character["model"]}}</p>
+    <p>Производитель: {{character["manufacturer"]}}</p>
+    <p>Стоимость в кредитах: {{character["cost_in_credits"]}}</p>
+    <p>Длина: {{character["length"]}}</p>
+    <p>Максимальная скорость: {{character["max_atmosphering_speed"]}}</p>
+    <p>Пассажиры: {{character["passenger"]}}</p>
+    <p>Класс космического корабля: {{character["starship_class"]}}</p>
+    {% if character["pilots"] != [] %}
+        <p>Пилоты:
+            <ul>
+                {% for res in object_pilots %}
+                <li>{{res}}</li>
+                {% endfor %}
+            </ul>
+        </p>
+    {% endif %}
+{% endif %}
+
+{% if info_type=="planets" %}
+    <p>Период вращения: {{character["rotation_period"]}}</p>
+    <p>Орбитальный период: {{character["orbital_period"]}}</p>
+    <p>Диаметр: {{character["diameter"]}}</p>
+    <p>Климат: {{character["climate"]}}</p>
+    <p>Гравитация: {{character["gravity"]}}</p>
+    <p>Местность: {{character["terrain"]}}</p>
+    <p>Население: {{character["population"]}}</p>
+    {% if character["residents"] != [] %}
+        <p>Жители:
+            <ul>
+                {% for res in object_residents %}
+                <li>{{res}}</li>
+                {% endfor %}
+            </ul>
+        </p>
+    {% endif %}
+    {% if character["films"] != [] %}
+        <p>Фильмы:
+            <ul>
+                {% for res in object_film %}
+                <li>{{res}}</li>
+                {% endfor %}
+            </ul>
+        </p>
+    {% endif %}
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,45 @@
+#version: '3.1'
+
+name: myapp
+
+services:
+  flask_web:
+    # Путь до Dockerfile
+    build: ./app
+    # Имя для создаваемого контейнера
+    container_name: web
+    # Создание переменных окружения в контейнере
+    environment:
+      # для отладки (при запуске в релиз убрать!)
+      - FLASK_ENV=development
+      ## Позволяет отслеживать процесс работы приложения в командной строке
+      - PYTHONUNBUFFERED=True
+      ##
+#      - DB_URL=postgresql://postgres:qwerty@localhost:5432/rest_api
+    depends_on:
+      - localhost
+    # Перезапускаем сервис в случае падения
+#    restart: on-failure
+    # Прокладывам путь для файлов. Все файлы, которые хранятся у вас в
+    # директории ./backend, появятся в директории контейнера /backend
+    volumes:
+      - ./app:/app
+    # Открываем порт в контейнер
+    # Порт, который будет смотреть наружу: порт который используется внутри контейнера
+    ports:
+      - "5000:5000"
+    command: python __init__.py
+  localhost:
+#    container_name: db
+    image: postgres:latest
+#    restart: always
+    environment:
+      - POSTGRES_PASSWORD=qwerty
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=rest_api_sw
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
