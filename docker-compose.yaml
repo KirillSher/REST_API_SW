@@ -28,18 +28,19 @@ services:
     # Порт, который будет смотреть наружу: порт который используется внутри контейнера
     ports:
       - "5000:5000"
-    command: python __init__.py
+    command: python run.py
   localhost:
 #    container_name: db
     image: postgres:latest
 #    restart: always
     environment:
-      - POSTGRES_PASSWORD=qwerty
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=rest_api_sw
+      - POSTGRES_PASSWORD=${qwerty}
+      - POSTGRES_USER=${postgres}
+      - POSTGRES_DB=${rest_api_sw}
     ports:
       - "5433:5432"
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - ./path/to/.env:/.env
+      - pgdata:/var/lib/postgresql/data
 volumes:
   pgdata:

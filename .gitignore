@@ -2,4 +2,4 @@
 .env
 venv
 pgdata
-/docker-compose.yaml
+docker-compose.yaml
