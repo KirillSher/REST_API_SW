@@ -3,7 +3,6 @@ import os
 from flask import Flask
 from app.extensions import engine, Base, Session
 from flask_login import LoginManager
-from app.config import config
 
 
 app = Flask(__name__)
