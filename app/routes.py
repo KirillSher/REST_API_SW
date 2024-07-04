@@ -13,6 +13,7 @@ from app.models import User
 
 session = Session()
 
+
 @login_manager.user_loader
 def load_user(user_id):
     user = session.query(User).filter(User.id == user_id).first()
@@ -24,10 +25,15 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/auth/<login>")
+@login_required
+def index_login(login):
+    return render_template("index_login.html", login=login)
+
+
 @app.route("/login/", methods=['GET', 'POST'])
 def login():
     login = request.form.get("login")
-    email = request.form.get("email")
     password = request.form.get("password")
 
     if login and password:
@@ -38,11 +44,11 @@ def login():
 
             next = request.args.get("next")
 
-            return redirect(next or url_for("index"))
+            return redirect(next or url_for("index_login", login=login))
         else:
             flash("Login or password is not correct")
     else:
-        flash("error")
+        flash("Please fill login and password fields")
 
     return render_template("login.html")
 
@@ -74,19 +80,12 @@ def register():
 @login_required
 def logout():
     logout_user()
-    return redirect("index")
-
-
-@app.errorhandler(404)
-def page_not_found(e):
-    if current_user.is_anonymous:
-        return redirect(url_for("login", next=request.path))
-    return "Page not found", 404
+    return redirect(url_for("index"))
 
 
 @app.after_request
 def redirect_to_signin(response):
-    if response.status_code == 404:
+    if response.status_code == 401:
         return redirect(url_for("login") + "?next=" + request.url)
 
     return response
@@ -107,14 +106,17 @@ def get_all_characters(type, page=1):
 
 
 @app.route("/people/")
+@login_required
 def people():
+    login = request.args.get('login', '')
     page = int(request.args.get('page', 1))
     characters, prev_page, next_page = get_all_characters(type="people", page=page)
     return render_template('people.html', characters=characters, prev_page=prev_page,
-                           next_page=next_page, page=page)
+                           next_page=next_page, page=page, login=login)
 
 
 @app.route("/planets/")
+@login_required
 def planets():
     page = int(request.args.get('page', 1))
     characters, prev_page, next_page = get_all_characters(type="planets", page=page)
@@ -127,6 +129,7 @@ def delete_character():
 
 
 @app.route("/starships/")
+@login_required
 def starships():
     page = int(request.args.get('page', 1))
     characters, prev_page, next_page = get_all_characters(type="starships", page=page)
@@ -158,6 +161,7 @@ def search_url(url, info_type, count):
 
 
 @app.route("/info_character/")
+@login_required
 def info_character():
     info_type = request.args.get('info_type', '')
     info_id = request.args.get('info_id', '')

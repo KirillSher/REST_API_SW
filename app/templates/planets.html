@@ -1,11 +1,11 @@
 {% extends 'base-login.html' %}
 
 {% block title %}
-Персонажи
+Планеты
 {% endblock %}
 
 {% block body %}
-<h1>Персонажи</h1>
+<h1>Планеты</h1>
 <ul>
     {% for character in characters %}
     <li>{{character["url"].rstrip("/").split("/")[-1]}}: <a href="/info_character/?info_type=planets&info_id={{character['url'].rstrip('/').split('/')[-1]}}&page={{page}}">{{character["name"]}}</a></li>

@@ -7,10 +7,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-engine = create_engine(os.getenv("DATABASE_URI"))
+engine = create_engine(os.getenv('DATABASE_URI'), echo=True)
+# engine = create_engine("sqlite:///user.db")
 try:
     with engine.connect() as connection:
-        result = connection.execute("SELECT 1")
+        # result = connection.execute("SELECT 1")
         print("Успешное подключение к БД")
 except Exception as e:
     print("Ошибка подключения к БД", e)

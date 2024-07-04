@@ -3,7 +3,7 @@ from datetime import datetime
 from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 
-from app import Base
+from app import Base, engine
 
 
 class User(Base, UserMixin):
@@ -28,3 +28,6 @@ class User(Base, UserMixin):
 
     def get_id(self):
         return str(self.id)
+
+
+Base.metadata.create_all(engine)
