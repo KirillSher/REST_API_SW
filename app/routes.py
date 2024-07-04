@@ -1,13 +1,17 @@
 from datetime import datetime
 
 import requests
-from flask import render_template, request, redirect, flash, url_for, jsonify, session
-from flask_login import login_user, login_required, logout_user
+from flask import render_template, request, redirect, flash, url_for, jsonify
+from flask_login import login_user, login_required, logout_user, current_user
+# from flask_sqlalchemy import session
 from werkzeug.security import check_password_hash, generate_password_hash
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Length, EqualTo
 
-from app import app, login_manager
+from app import app, login_manager, Session
 from app.models import User
 
+session = Session()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -34,7 +38,7 @@ def login():
 
             next = request.args.get("next")
 
-            return redirect(next)
+            return redirect(next or url_for("index"))
         else:
             flash("Login or password is not correct")
     else:
@@ -45,19 +49,19 @@ def login():
 
 @app.route("/register/", methods=['GET', 'POST'])
 def register():
-    login = request.form.get("login")
-    email = request.form.get("email")
-    password = request.form.get("password")
-    password_repeat = request.form.get("password_repeat")
-
     if request.method == "POST":
+        login = request.form["login"]
+        email = request.form["email"]
+        password = request.form["password"]
+        password_repeat = request.form["password_repeat"]
+
         if not (login or email or password or password_repeat):
             flash("Please, fill all fields")
         elif password != password_repeat:
             flash("Password are not equal!")
         else:
             hash_pwd = generate_password_hash(password)
-            new_user = User(login=login, password=hash_pwd, created_at=datetime.now())
+            new_user = User(login=login, email=email, password=hash_pwd, created_at=datetime.now())
             session.add(new_user)
             session.commit()
 
@@ -71,6 +75,13 @@ def register():
 def logout():
     logout_user()
     return redirect("index")
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    if current_user.is_anonymous:
+        return redirect(url_for("login", next=request.path))
+    return "Page not found", 404
 
 
 @app.after_request
@@ -179,6 +190,3 @@ def info_character():
                                    object_film=object_film, object_pilots=object_pilots, page=page)
     else:
         return jsonify(dict(error='Character not found')), 404
-
-
-

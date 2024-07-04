@@ -3,9 +3,23 @@
 name: myapp
 
 services:
+  db:
+    hostname: postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./path/to/.env:/.env
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
   flask_web:
     # Путь до Dockerfile
-    build: ./app
+    build: .
     # Имя для создаваемого контейнера
     container_name: web
     # Создание переменных окружения в контейнере
@@ -14,33 +28,12 @@ services:
       - FLASK_ENV=development
       ## Позволяет отслеживать процесс работы приложения в командной строке
       - PYTHONUNBUFFERED=True
-      ##
-#      - DB_URL=postgresql://postgres:qwerty@localhost:5432/rest_api
-    depends_on:
-      - localhost
     # Перезапускаем сервис в случае падения
-#    restart: on-failure
-    # Прокладывам путь для файлов. Все файлы, которые хранятся у вас в
-    # директории ./backend, появятся в директории контейнера /backend
+    restart: on-failure
     volumes:
-      - ./app:/app
-    # Открываем порт в контейнер
-    # Порт, который будет смотреть наружу: порт который используется внутри контейнера
+      - .:/app
     ports:
       - "5000:5000"
     command: python run.py
-  localhost:
-#    container_name: db
-    image: postgres:latest
-#    restart: always
-    environment:
-      - POSTGRES_PASSWORD=${qwerty}
-      - POSTGRES_USER=${postgres}
-      - POSTGRES_DB=${rest_api_sw}
-    ports:
-      - "5433:5432"
-    volumes:
-      - ./path/to/.env:/.env
-      - pgdata:/var/lib/postgresql/data
 volumes:
   pgdata:

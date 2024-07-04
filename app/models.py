@@ -15,8 +15,13 @@ class User(Base, UserMixin):
     created_at = Column(DateTime, default=datetime.now())
     is_active = Column(Boolean, default=True)
 
-    def __init__(self, user_id):
-        self.id = user_id
+    def __init__(self, login, email, password, created_at=None):
+        # self.id = user_id
+        self.login = login
+        self.email = email
+        self.password = password
+        if created_at:
+            self.created_at = created_at
 
     def is_active(self):
         return self.is_active
